@@ -28,10 +28,11 @@ secondary signal, not a guarantee.
 """
 
 import time
+from urllib import response
 
 from app.extraction.llm_extractor_gemini import client, _parse_response
 
-MODEL_NAME = "gemini-3.1-flash-lite"
+MODEL_NAME = "gemini-3.5-flash"
 
 
 def _build_prompt(items: list[dict], mission_text: str, target_language: str, item_kind: str) -> str:
@@ -50,7 +51,10 @@ def _build_prompt(items: list[dict], mission_text: str, target_language: str, it
         "  it must not appear in your rewrite.",
         "- Do not change dates, company names, or job titles.",
         f"- Write the output in {target_language}.",
-        "- Return ONLY valid JSON matching the schema below, no markdown, no commentary.",
+        "- Return ONLY valid JSON matching the schema below.",
+        "- Do NOT wrap the JSON in markdown code fences (no ```json or ```).",
+        "- Do NOT add any explanation, preamble, or commentary before or after the JSON.",
+        "- Your entire response must be a single valid JSON object, nothing else.",
         "",
         f"TARGET MISSION:\n{mission_text}",
         "",
@@ -138,6 +142,9 @@ def adapt_selected_experiences(
     )
 
     data = _parse_response(response, key="adapted_items")
+    print(f"[DEBUG] finish_reason: {response.candidates[0].finish_reason if response.candidates else 'N/A'}")
+    print(f"[DEBUG] longueur texte reçu: {len(response.text or '')}")
+    print(f"[DEBUG] texte brut: {response.text!r}")
 
     # Stockage temporaire sans se soucier de l'ordre
     adapted_by_idx = {}

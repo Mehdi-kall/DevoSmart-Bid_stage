@@ -102,7 +102,7 @@ def _append_slide_from_source(
                 new_name = rename_map.get(old_name, old_name)
                 rel.set("Target", f"../media/{new_name}")
         rels_tree.write(str(new_rels_path), xml_declaration=True, encoding="UTF-8", standalone=True)
-
+        _copy_notes_slide(base_workdir, src_workdir, src_rels_path, new_rels_path)
     # Register in [Content_Types].xml
     ct_path = base_workdir / "[Content_Types].xml"
     ct_tree = etree.parse(str(ct_path))
@@ -137,6 +137,60 @@ def _append_slide_from_source(
     new_sldId.set("id", str(max(existing_slide_ids) + 1))
     new_sldId.set(qn("r:id"), new_rid)
     pres_tree.write(str(pres_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
+def _copy_notes_slide(base_workdir: Path, src_workdir: Path, src_slide_rels_path: Path, new_slide_rels_path: Path) -> None:
+    """
+    If the source slide has a notesSlide relationship, copies the referenced
+    notesSlideN.xml into the base deck under a fresh number, registers it in
+    Content_Types, and rewrites the new slide's rels to point to it.
+    Without this, the merged slide's rels reference a notes part that was
+    never copied -- PowerPoint flags the file as needing repair.
+    """
+    if not new_slide_rels_path.exists():
+        return
+
+    rels_tree = etree.parse(str(new_slide_rels_path))
+    notes_rel = None
+    for rel in rels_tree.getroot():
+        if rel.get("Type", "").endswith("/notesSlide"):
+            notes_rel = rel
+            break
+    if notes_rel is None:
+        return
+
+    src_notes_dir = src_workdir / "ppt" / "notesSlides"
+    base_notes_dir = base_workdir / "ppt" / "notesSlides"
+    base_notes_dir.mkdir(parents=True, exist_ok=True)
+
+    old_target = notes_rel.get("Target", "")
+    old_name = old_target.split("/")[-1]
+    src_notes_path = src_notes_dir / old_name
+    if not src_notes_path.exists():
+        return
+
+    existing = [int(p.stem.replace("notesSlide", "")) for p in base_notes_dir.glob("notesSlide[0-9]*.xml")]
+    new_num = max(existing, default=0) + 1
+    new_notes_path = base_notes_dir / f"notesSlide{new_num}.xml"
+    shutil.copy(src_notes_path, new_notes_path)
+
+    # Copy the notesSlide's own rels (points to notesMaster, shared/unchanged)
+    src_notes_rels = src_notes_dir / "_rels" / f"{old_name}.rels"
+    if src_notes_rels.exists():
+        (base_notes_dir / "_rels").mkdir(parents=True, exist_ok=True)
+        shutil.copy(src_notes_rels, base_notes_dir / "_rels" / f"notesSlide{new_num}.xml.rels")
+
+    notes_rel.set("Target", f"../notesSlides/notesSlide{new_num}.xml")
+    rels_tree.write(str(new_slide_rels_path), xml_declaration=True, encoding="UTF-8", standalone=True)
+
+    ct_path = base_workdir / "[Content_Types].xml"
+    ct_tree = etree.parse(str(ct_path))
+    override = etree.SubElement(ct_tree.getroot(), qn("ct:Override"))
+    override.set("PartName", f"/ppt/notesSlides/notesSlide{new_num}.xml")
+    override.set(
+        "ContentType",
+        "application/vnd.openxmlformats-officedocument.presentationml.notesSlide+xml",
+    )
+    ct_tree.write(str(ct_path), xml_declaration=True, encoding="UTF-8", standalone=True)
 
 
 def merge_pptx_files(pptx_paths: list[str], output_path: str) -> str:
