@@ -76,7 +76,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085654.png)
+![Candidate search dashboard](1.png)
 
 
 
@@ -84,7 +84,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085725.png)
+![Candidate search dashboard](screenshots/2.png)
 
 
 
@@ -93,7 +93,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085917.png)
+![Candidate search dashboard](screenshots/3.png)
 
 
 
@@ -102,7 +102,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085959.png)
+![Candidate search dashboard](screenshots/4.png)
 
 
 
@@ -111,7 +111,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-![Candidate search dashboard](screenshots/Screenshot_2026-09-06_090012.png)
+![Candidate search dashboard](screenshots/5.png)
 
 
 
