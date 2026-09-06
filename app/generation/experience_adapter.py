@@ -32,7 +32,7 @@ from urllib import response
 
 from app.extraction.llm_extractor_gemini import client, _parse_response
 
-MODEL_NAME = "gemini-3.5-flash"
+MODEL_NAME = "gemini-3.1-flash-lite"
 
 
 def _build_prompt(items: list[dict], mission_text: str, target_language: str, item_kind: str) -> str:

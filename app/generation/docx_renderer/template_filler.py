@@ -743,6 +743,88 @@ def fill_signature(document: Document, cv_json: dict) -> None:
 # Main renderer
 # ---------------------------------------------------------------------------
 
+def remove_diplomes_certifications(document: Document) -> None:
+    """
+    Remove the entire 'Diplômes et Certifications' section,
+    including paragraphs, tables, images, and other elements,
+    until the 'Renseignements pour contacter' section.
+    """
+
+    body = document._element.body
+
+    elements = list(body.iterchildren())
+
+    start_index = None
+    end_index = None
+
+    # ---------------------------------------------------------
+    # 1. Find the beginning of the certification section
+    # ---------------------------------------------------------
+    for i, element in enumerate(elements):
+
+        text = "".join(element.itertext()).strip()
+
+        if "Diplômes et Certifications" in text:
+            start_index = i
+            print(f"✅ Certification section found at element {i}")
+            break
+
+    if start_index is None:
+        print("⚠️ 'Diplômes et Certifications' section not found")
+        return
+
+    # ---------------------------------------------------------
+    # 2. Find the next section
+    # ---------------------------------------------------------
+    for i in range(start_index + 1, len(elements)):
+
+        text = "".join(elements[i].itertext()).strip()
+
+        if "Renseignements pour contacter" in text:
+            end_index = i
+            print(f"✅ Contact section found at element {i}")
+            break
+
+    if end_index is None:
+        print("⚠️ 'Renseignements pour contacter' section not found")
+        return
+
+    # ---------------------------------------------------------
+    # 3. Remove EVERYTHING between the two sections
+    # ---------------------------------------------------------
+    for element in elements[start_index:end_index]:
+
+        parent = element.getparent()
+
+        if parent is not None:
+            parent.remove(element)
+
+    print("✅ Diplômes et Certifications section completely removed")
+
+def remove_certification_images(document: Document) -> None:
+    """
+    Remove all embedded certificate/diploma images from the document.
+    """
+
+    removed = 0
+
+    for shape in list(document.inline_shapes):
+
+        inline = shape._inline
+
+        # The <w:drawing> element contains the image
+        drawing = inline.getparent()
+
+        if drawing is not None:
+            paragraph = drawing.getparent()
+
+            if paragraph is not None:
+                paragraph.remove(drawing)
+                removed += 1
+
+    print(f"✅ Removed {removed} certification images")
+
+
 def render_cv_docx(
     cv_json: dict,
     output_path: str,
@@ -790,6 +872,8 @@ def render_cv_docx(
     fill_professional_experience(document, cv_json)
     fill_mission_experience(document, cv_json)
     fill_contact(document, cv_json)
+    remove_diplomes_certifications(document)
+    remove_certification_images(document)
 
     document.save(str(output))
 
