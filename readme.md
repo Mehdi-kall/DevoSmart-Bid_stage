@@ -76,7 +76,7 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-> \_Add screenshots below to showcase the platform in action.\_
+![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085654.png)
 
 
 
@@ -84,7 +84,8 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-`\[screenshot placeholder — candidate search \& filtering UI]`
+![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085725.png)
+
 
 
 
@@ -92,7 +93,8 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-`\[screenshot placeholder — semantic match results with scores]`
+![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085917.png)
+
 
 
 
@@ -100,15 +102,17 @@ Consulting firms responding to RFPs need to quickly identify which consultants m
 
 
 
-`\[screenshot placeholder — CandidateSidebar + drag-and-drop experience reordering]`
+![Candidate search dashboard](screenshots/Screenshot_2026-09-06_085959.png)
 
 
 
-\*\*Generated CV Output (PPTX)\*\*
+
+\*\*Generated CV )\*\*
 
 
 
-`\[screenshot placeholder — before/after: raw CV vs. generated branded deck]`
+![Candidate search dashboard](screenshots/Screenshot_2026-09-06_090012.png)
+
 
 
 
@@ -344,7 +348,7 @@ cv-platform/
 
 \# Clone the repo
 
-git clone https://github.com/<your-username>/cv-platform.git
+git clone [https://github.com/<your-username>/cv-platform.git](https://github.com/Mehdi-kall/DevoSmart-Bid_stage.git)
 
 cd cv-platform
 
